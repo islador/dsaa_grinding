@@ -1,0 +1,17 @@
+https://neetcode.io/problems/rotting-fruit
+rotting_fruit_planning_notes
+
+We're trying to find the longest length of fresh fruit connected to the rotted fruit or determine that there are pockets of fresh fruit that cannot be accessed from the rotted fruit.
+
+1. Traverse the matrix to find all rotting fruit and count all fresh fruit
+2. Calculate the maximum amount of time for all elements of the matrix to rot
+3. Recursively traverse the grid starting from the rotting fruit and search for the fresh fruit
+
+
+There's an implication for the propagation since it happens monotonically if adjacent. This means rot can propagate in opposite directions simultaneously.
+
+Fruit must be touching in order for fruit to propagate. So our exit criteria are:
+1. All the fresh fruit has been found and is accessible from the rotten fruit, in which case we'll return the longest line of fresh fruit as our duration since rot propgates monotonically
+2. We have traversed over all connected fruits but have not accounted for all known fresh fruit. In this case the return is -1 denoting not all fresh fruit can be rotted
+
+It's possible for there to be multiple rotten fruits, and so there may be race conditions on the rot. We'll need a way to be aware of the shortest route from any given rotted fruit to another.
