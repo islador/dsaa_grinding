@@ -15,3 +15,83 @@ Fruit must be touching in order for fruit to propagate. So our exit criteria are
 2. We have traversed over all connected fruits but have not accounted for all known fresh fruit. In this case the return is -1 denoting not all fresh fruit can be rotted
 
 It's possible for there to be multiple rotten fruits, and so there may be race conditions on the rot. We'll need a way to be aware of the shortest route from any given rotted fruit to another.
+
+0 is empty
+1 is fresh
+2 is rotten
+
+Algo
+1. Start at square, check next direction
+2. If square is in matrix, check its value
+3. If square is equal to 0, check next direction
+4. If square is equal to 2, check next direction
+5. If square is equal to 1, move cursor to it, set it's distance to rotten fruit
+
+Scenarios
+1. full grid
+2. island of fresh fruit
+3. 
+
+Is there any reason not to modify the grid as I move? -> No, more memory efficient
+
+Steps:
+1. Traverse the whole grid, identifying and storing the position of fruits (fresh_fruits, rotten_fruits) and changing them to R for rotten and F for fresh
+2. Start at the R and, in sequence, check each square, left, up, right, down. When checking a square:
+2a. If it is not in the matrix, move on
+2b. If it is the previous square, move on
+2c. If it is an R, move on
+2d. If it is a 0, move on
+2e. If it is an F, change it to the distance traversed, increment the count of fruits rotteded by 1, move the cursor to that square and recurse
+2f. If it has a value lower than the current distance traversed, move on
+2g. If it has a value higher than the current distance traversed +1, change it to the current distance traversed +1, move the cursor to that square and recurse
+3. If len(fresh_fruits) == count_of_rotted_fruits, find the highest value in the matrix and return that, otherwise return -1
+
+
+Not sure how to count everything yet... What is the correct storage mechanism for all this?
+
+Flatten the array to make them easily addressable and then go from there?
+
+A flat array preserves position through the index, so it's directly addressible as flattened_index[grid_row + grid_column]
+
+I could use this flat array to store information about the grid squares and easily update them.
+I can keep track of the maximum traversible distance from a rotten fruit here and easily update it.
+
+The storage array starts as a set of zeros, as a fresh fruit is encountered and rotted, the zeros are changed to numbers
+The largest number in the storage array is the maximum propagation distance a fresh fruit is from a rotted fruit
+If there are less numbers in this array than there are fresh fruits then this problem cannot be solved.
+
+
+
+
+Steps:
+1. Traverse the whole matrix:
+  a. Count all the fresh fruits -> fresh_fruit_count
+  b. Find all the rotten fruits -> rotten_fruits
+  c. Build the storage array -> storage_array
+2. For each Rotten Fruit (2), in sequence, check each surrounding square (left, up, right, down) for the following:
+  a. If it's not in the matrix, move on
+  b. If it is the previous square, move on
+  c. If the value is not a Fresh Fruit (1), move on
+  e. If it has a storage_array value > 0 but < than the current distance traversed +1, move on
+  e. If it is a Fresh Fruit (1) and has a storage_array value higher than the current distance traversed +1, or has the same value as the current distance +1 -> change it to the current distance travesed +1, update the storage_array with the value, and recurse
+3. Iterate over the storage_array, counting the number of non-zeros (fruits_rotted) and keeping track of the highest number seen so far (highest_propagation_distance)
+4. If len(fresh_fruits) == fruits_rotted, return highest_propagation_distance, otherwise return -1
+
+
+Steps:
+1. Traverse the whole matrix:
+  a. Count all the fresh fruits -> fresh_fruit_count
+  b. Find all the rotten fruits -> rotten_fruits
+  c. Build the storage array -> storage_array
+2. For each Rotten Fruit (2), in sequence, check each surrounding square (left, up, right, down) for the following:
+  a. If it is a Fresh Fruit (1):
+    ab. and its current storage_array value is zero -> update the storage_array with the value, and recurse
+    ac. or its current storage_array value is higher than the current distance traversed +1 -> update the storage_array with the value, and recurse
+    ad. or its current storage_array value is the same as the current distance traversed +1 -> update the storage_array with the value, and recurse
+3. Iterate over the storage_array, counting the number of non-zeros (fruits_rotted) and keeping track of the highest number seen so far (highest_propagation_distance)
+4. If len(fresh_fruits) == fruits_rotted, return highest_propagation_distance, otherwise return -1
+
+
+[[2,1,1,0],[0,1,2,1],[1,1,0,0],[0,1,1,1]] -> 9 & 5
+
+[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]
