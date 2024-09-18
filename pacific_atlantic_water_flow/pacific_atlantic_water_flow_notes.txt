@@ -1,0 +1,75 @@
+Is there any point to defining rivers?
+
+What could the algo look like? Do we start a search for high points then calculate from there? What about low points and calculate up?
+
+It appears that water _does_ flow from high to low / same in equal portion. So it's not that water _only_ flows to the lowest of the surrounding squares touching it, it's that water _always_ flows to _all_ same or lower squares.
+
+[[9,9,9,9,9],[9,9,9,9,9],[9,9,9,9,9]]
+
+In the below scenario, because water flows equally to all squares, we would return all squares
+[
+  [9,9,9,9,9],
+  [9,9,9,9,9],
+  [9,9,9,9,9]
+]
+
+In the below scenario, because water flows equally to all same squares, we'd return everything except the center 8,7,8 squares because the water is "trapped" there. It's an inland lake.
+[
+  [9,9,9,9,9],
+  [9,8,7,8,9],
+  [9,9,9,9,9]
+]
+
+In the below we have an inland "river", where water flows from all the 9's into the center "lake" and then out into the bottom of the grid (Atlantic). In this case we return all cells because again, the water flows across all the 9's (which are ubroken) evenly.
+[
+  [9,9,9,9,9],
+  [9,8,7,8,9],
+  [9,9,6,9,9]
+]
+
+In the below we return everything in the top row as it flows into both, we return the first two 8's on the second row as they flow into both, but the rest of the matrix drains only into the atlantic.
+[
+  [9,9,9,9,9],
+  [8,8,7,8,8],
+  [9,9,6,9,9]
+]
+
+Each cell has a relation to the other in height, but also in what it connects to elsewhere. The downstream connections are ultimately what we're looking for, and those connections aren't linear, they're many to many.
+
+There's a concept of "Flow Paths", where water flows. Can we model flow paths as where a single drop goes? Seeking lower energy? But we'd want to branch in our search since each square can have up to four flow paths.
+
+In the below case we would return all but the top left and bottom right 7's.
+[
+  [7,8,7],
+  [8,9,8],
+  [7,8,7]
+]
+
+We can assert that each cell has up to four flow directions, and each flow direction has a destination (Pac or Atl).
+
+The top right and bottom left always have two flow directions and two destinations. We can calculate each flow direction by checking each cell around the current cell. We can determine the destination of a given flow direction by checking each cell's flow destination. If we start at the edges and work in we have no problem with this.
+
+Our algorithm should work "clockwise" from the top right around the matrix.
+
+Steps
+1. Start in the top right cell and iterate through all the cells in a clockwise fashion.
+2. Determine the cell's flow directions by inspecting the cell's directly adjacent to the current cell
+  2a. A cell flows right if the cell above it is the same or lower value the current cell.
+  2b. A cell flows down if the cell above it is the same or lower value the current cell.
+  2c. A cell flows left if the cell above it is the same or lower value the current cell.
+  2d. A cell flows up if the cell above it is the same or lower value the current cell.
+3. Determine the cell's flow destination by inspecting the cell's directly adjacent to the current cell and their flow destination's
+  3a. A cell has a flow destination of the pacific if any cell it flows into has a flow destination of the pacific
+  3b. A cell has a flow destination of the atlantic if any cell it flows into has a flow destination of the atlantic
+  3c. A cell has a flow destination of the pacific if it borders the top or left side of the matrix
+  3d. A cell has a flow destination of the atlantic if it borders the right or bottom of the matrix
+4. Return the coordinates of all cells that have a flow destination of both pacific and atlantic
+
+
+Clockwise Algorithm - Assume the matrix is always square
+1. Move to the right until you encounter a previously visited cell or the edge of the matrix.
+2. Move down until you encounter a previously visited cell or the edge of the matrix.
+3. Move left until you encounter a previously visited cell or the edge of the matrix.
+4. Move up until you encounter a previously visited cell or the edge of the matrix.
+
+[[9,9,9,9,9],[9,9,9,9,9],[9,9,9,9,9]]
