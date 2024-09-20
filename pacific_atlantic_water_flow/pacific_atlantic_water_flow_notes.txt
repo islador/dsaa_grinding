@@ -87,3 +87,24 @@ Clockwise Algorithm - Assume the matrix is always square
   [2,1,2],
   [2,2,2]
 ]
+
+2024-09-20
+My algo is incorrect, and possibly fundamentally wrong. I'm doing a single spiral pass and evaluating flow destinations a single time. However each flow destination caculated impacts _all_ other flow destinations. Right now all previously computed flow destinations are reflected in the currently evaluated cell's flow destination, but when a new cell's destinations are calculated they aren't back propagated to the previous cells.
+
+How can I back-propagate these destinations?
+
+My original implementation had the notion of tracking flow directions. These can be reversed and used as a way to trace flows backwards each time a flow destination is calculated.
+
+What would that data structure look like?
+
+A dictionary in 2d matrix called flow_properties
+The dictionary could denote the following: flow_properties = {flow_directions:{"right": True, "down": True, "left": True, "up": True}, is_adjacent_cell_off_matrix:{"right": False, "down": False, "left": False, "up": False}}
+
+DONE - We can populate the above matrix during initial provisioning, with all false values.
+
+In find_flow_destinations_for_current_position when a border cell is detected we can merge update that cell's flow_properties[is_adjacent_cell_off_matrix].
+
+In find_flow_destinations_for_current_position when we compute a flow direction we can merge update that cell's flow_properties[flow_directions]
+
+In find_flow_destinations_for_current_position, when we're done calculating a given cell's flow_destinations and storing them, we can traverse that cell's flow_directions and update all of their flow_destinations.
+* This is almost recursive, but not quite.
