@@ -27,7 +27,6 @@ class Solution:
     @classmethod
     def add_flow_destination_for_current_position(self, flow_destinations, column_count, current_position, new_destinations):
         new_destinations["cell_position"] = current_position
-        print(f"Adding flow destination for {current_position}, {new_destinations}")
         current_destinations = flow_destinations[self.storage_array_position_from_matrix_position(column_count, current_position)]
         # Merge the old value with the new value
         flow_destinations[self.storage_array_position_from_matrix_position(column_count, current_position)] = current_destinations | new_destinations
@@ -108,7 +107,7 @@ class Solution:
         # 2. Move down until you encounter a previously visited cell or the edge of the matrix.
         # 3. Move left until you encounter a previously visited cell or the edge of the matrix.
         # 4. Move up until you encounter a previously visited cell or the edge of the matrix.
-        while i < ((row_count * column_count) -1):
+        while i < ((row_count * column_count)):
             current_position = [current_row, current_column]
             visited_cells[self.storage_array_position_from_matrix_position(column_count, current_position)] = True
             # Assign flow_destinations for the current position based on what is around it.
