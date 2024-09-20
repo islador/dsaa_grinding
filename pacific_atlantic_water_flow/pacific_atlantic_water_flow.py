@@ -32,36 +32,6 @@ class Solution:
         flow_destinations[self.storage_array_position_from_matrix_position(column_count, current_position)] = current_destinations | new_destinations
 
     @classmethod
-    def find_flow_destinations_for_current_position(self, matrix, row_count, column_count, current_position, flow_destinations):
-        #print(f"current_position: {current_position}")
-        ###
-        ## Run the algo by hand; something is broken in the way I'm storing flow destinations.
-        ###
-        adjacent_cell_positions = self.calculate_adjacent_cells_positions(current_position)
-        current_position_value = matrix[current_position[0]][current_position[1]]
-        for adjacent_cell_position in adjacent_cell_positions:
-            # If the cell position of a calculated adjacent cell is not in the matrix then we have a border cell.
-            if self.is_new_position_in_matrix(row_count, column_count, adjacent_cell_position) == False:
-                if adjacent_cell_position[0] == -1:
-                    # If the row value is -1, then we're at the top of the matrix and thus have a flow destination of the Pacific
-                    self.add_flow_destination_for_current_position(flow_destinations, column_count, current_position, {"Pacific": True})
-                if adjacent_cell_position[1] == -1:
-                    # If the column value is -1, then we're at the left of the matrix and thus have a flow destination of the Pacific
-                    self.add_flow_destination_for_current_position(flow_destinations, column_count, current_position, {"Pacific": True})
-                if adjacent_cell_position[0] > (row_count -1):
-                    # If the row value is greater than the number of rows, adjusted for binary counting, then we're at the bottom of the matrix and thus have a flow destination of the Atlantic
-                    self.add_flow_destination_for_current_position(flow_destinations, column_count, current_position, {"Atlantic": True})
-                if adjacent_cell_position[1] > (column_count -1):
-                    # If the column value is greater than the number of columns, adjusted for binary counting, then we're at the right of the matrix and thus have a flow destination of the Atlantic
-                    self.add_flow_destination_for_current_position(flow_destinations, column_count, current_position, {"Atlantic": True})
-            else:
-                # If the adjacent_cell_position's value is lower than the current_positions' value then
-                if matrix[adjacent_cell_position[0]][adjacent_cell_position[1]] < matrix[current_position[0]][current_position[1]]:
-                    # Extract out the adjacent_cell's flow destinations
-                    downstream_cell_destinations = flow_destinations[self.storage_array_position_from_matrix_position(column_count, adjacent_cell_position)]
-                    self.add_flow_destination_for_current_position(flow_destinations, column_count, current_position, downstream_cell_destinations)
-
-    @classmethod
     def calculate_next_position(self, row_count, column_count, current_position, current_direction):
         # Calculate next position
         next_position = [current_position[0], current_position[1]]
@@ -96,6 +66,37 @@ class Solution:
             current_row -=1
         return current_row, current_column
     
+     @classmethod
+    def find_flow_destinations_for_current_position(self, matrix, row_count, column_count, current_position, flow_destinations):
+        #print(f"current_position: {current_position}")
+        ###
+        ## Run the algo by hand; something is broken in the way I'm storing flow destinations.
+        ###
+        adjacent_cell_positions = self.calculate_adjacent_cells_positions(current_position)
+        current_position_value = matrix[current_position[0]][current_position[1]]
+        for adjacent_cell_position in adjacent_cell_positions:
+            # If the cell position of a calculated adjacent cell is not in the matrix then we have a border cell.
+            if self.is_new_position_in_matrix(row_count, column_count, adjacent_cell_position) == False:
+                if adjacent_cell_position[0] == -1:
+                    # If the row value is -1, then we're at the top of the matrix and thus have a flow destination of the Pacific
+                    self.add_flow_destination_for_current_position(flow_destinations, column_count, current_position, {"Pacific": True})
+                if adjacent_cell_position[1] == -1:
+                    # If the column value is -1, then we're at the left of the matrix and thus have a flow destination of the Pacific
+                    self.add_flow_destination_for_current_position(flow_destinations, column_count, current_position, {"Pacific": True})
+                if adjacent_cell_position[0] > (row_count -1):
+                    # If the row value is greater than the number of rows, adjusted for binary counting, then we're at the bottom of the matrix and thus have a flow destination of the Atlantic
+                    self.add_flow_destination_for_current_position(flow_destinations, column_count, current_position, {"Atlantic": True})
+                if adjacent_cell_position[1] > (column_count -1):
+                    # If the column value is greater than the number of columns, adjusted for binary counting, then we're at the right of the matrix and thus have a flow destination of the Atlantic
+                    self.add_flow_destination_for_current_position(flow_destinations, column_count, current_position, {"Atlantic": True})
+            else:
+                # If the adjacent_cell_position's value is lower than the current_positions' value then
+                if matrix[adjacent_cell_position[0]][adjacent_cell_position[1]] < matrix[current_position[0]][current_position[1]]:
+                    # Extract out the adjacent_cell's flow destinations
+                    downstream_cell_destinations = flow_destinations[self.storage_array_position_from_matrix_position(column_count, adjacent_cell_position)]
+                    self.add_flow_destination_for_current_position(flow_destinations, column_count, current_position, downstream_cell_destinations)
+
+
     @classmethod
     def clockwise_traverse_matrix(self, row_count, column_count, matrix, next_direction_sequence, visited_cells, flow_destinations):
         i = 0
