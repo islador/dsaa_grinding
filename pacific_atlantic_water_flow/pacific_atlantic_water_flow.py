@@ -1,3 +1,4 @@
+from typing import List
 class Solution:
     @classmethod
     def is_new_position_in_matrix(self, row_count, column_count, new_position):
@@ -26,7 +27,6 @@ class Solution:
 
     @classmethod
     def add_flow_destination_for_current_position(self, flow_destinations, column_count, current_position, new_destinations, outside_matrix):
-        new_destinations["cell_position"] = current_position
         current_destinations = flow_destinations[self.storage_array_position_from_matrix_position(column_count, current_position)]
         # Merge the old value with the new value
         #print(f"current_position: {current_position}, new_destinations: {new_destinations}, outside_matrix: {outside_matrix}")
@@ -155,11 +155,16 @@ class Solution:
         
         # Computation
         self.clockwise_traverse_matrix(row_count, column_count, heights, next_direction_sequence, visited_cells, flow_destinations, flow_properties)
-        #for flow_property in flow_properties:
-        #    print(f"Flow Directions: {flow_property['flow_directions']}")
         print(f"Flow Destinations: {flow_destinations}")
+        
+        # Format the output
         cells_that_drain_into_both = []
+        flow_destinations_position = 0
         for flow_destination in flow_destinations:
             if flow_destination["Atlantic"] == True and flow_destination["Pacific"] == True:
-                cells_that_drain_into_both.append(flow_destination["cell_position"])
+                cells_that_drain_into_both.append([((flow_destinations_position - (flow_destinations_position % column_count))//column_count),(flow_destinations_position % column_count)])
+            flow_destinations_position+=1
         return cells_that_drain_into_both
+
+input_array = [[2,2,2],[2,1,2],[2,2,2]]
+print(f"{Solution.pacificAtlantic(Solution, input_array)}")
