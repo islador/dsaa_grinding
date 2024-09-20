@@ -102,9 +102,156 @@ The dictionary could denote the following: flow_properties = {flow_directions:{"
 
 DONE - We can populate the above matrix during initial provisioning, with all false values.
 
-In find_flow_destinations_for_current_position when a border cell is detected we can merge update that cell's flow_properties[is_adjacent_cell_off_matrix].
+DONE - In find_flow_destinations_for_current_position when a border cell is detected we can merge update that cell's flow_properties[is_adjacent_cell_off_matrix]. [[2,2,2],[2,1,2],[2,2,2]]
 
-In find_flow_destinations_for_current_position when we compute a flow direction we can merge update that cell's flow_properties[flow_directions]
+DONE - In find_flow_destinations_for_current_position when we compute a flow direction we can merge update that cell's flow_properties[flow_directions]. Tested with [[2,2,2],[2,1,2],[2,2,2]]
 
 In find_flow_destinations_for_current_position, when we're done calculating a given cell's flow_destinations and storing them, we can traverse that cell's flow_directions and update all of their flow_destinations.
 * This is almost recursive, but not quite.
+
+
+[
+  00 {'Atlantic': False, 'Pacific': False, 'cell_position': [1, 0]},
+    01 {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 2]},
+    02 {'Atlantic': False, 'Pacific': False, 'cell_position': [1, 2]},
+    10 {'Atlantic': True, 'Pacific': False, 'cell_position': [1, 0]},
+    11 {'Atlantic': False, 'Pacific': False, 'cell_position': [1, 0]},
+    12 {'Atlantic': False, 'Pacific': False, 'cell_position': [2, 2]},
+    20 {'Atlantic': True, 'Pacific': False, 'cell_position': [1, 0]},
+    21 {'Atlantic': True, 'Pacific': False, 'cell_position': [2, 0]},
+    22 {'Atlantic': True, 'Pacific': False, 'cell_position': [2, 1]}
+]
+
+Ok, so this is just... wrong. The storage array is supposed to be flat
+* Why are the cell positions wrong?
+  * They're encoding twice for some reason, which is probably the root of the bug. (1,0 appears 3 times while 0,0 is never shown)
+  * I believe add_flow_destination_for_current_position is correct, since it's purely a pass through.
+    * This means that how we're calculating the values is wrong. Which makes sense.
+
+
+2,2,2
+2,1,2
+2,2,2
+
+
+I removed the update when a cell's neighbors are lower than it is. This has resulted in the cell data being correct. 
+[{'Atlantic': False, 'Pacific': True, 'cell_position': [0, 0]},
+{'Atlantic': False, 'Pacific': True, 'cell_position': [0, 1]},
+{'Atlantic': True, 'Pacific': True, 'cell_position': [0, 2]},
+{'Atlantic': False, 'Pacific': True, 'cell_position': [1, 0]},
+{'Atlantic': False, 'Pacific': False}, -> Why is this broken!? Oh, this is default, heh.
+{'Atlantic': True, 'Pacific': False, 'cell_position': [1, 2]},
+{'Atlantic': True, 'Pacific': True, 'cell_position': [2, 0]},
+{'Atlantic': True, 'Pacific': False, 'cell_position': [2, 1]},
+{'Atlantic': True, 'Pacific': False, 'cell_position': [2, 2]}]
+
+
+current_position: [0, 0], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 0], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 1], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 0]}
+# Ok, so we're calling an update from 01 to 00, why are we doing that?
+## This is correct, we're copying the 00 data to 01, which is what should happen, we then expect the function to step on it and set it to 01
+current_position: [0, 1], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 1], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 2], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 1]}
+current_position: [0, 2], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [1, 2], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 1]}
+current_position: [1, 2], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 2]}
+current_position: [1, 2], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [2, 2], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [2, 2], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False, 'cell_position': [1, 2]}
+current_position: [2, 1], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [2, 1], downstream_cell_destinations: {'Atlantic': True, 'Pacific': False, 'cell_position': [2, 2]}
+
+
+
+current_position: [0, 0], new_destinations_clobber: {'Pacific': True, 'cell_position': [0, 0]}
+current_position: [0, 0], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 0], new_destinations_clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 0]}
+current_position: [0, 0], new_destinations_clobber: {'Pacific': True, 'cell_position': [0, 0]}
+current_position: [0, 0], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 0], new_destinations_clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 0]}
+current_position: [0, 1], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 0]}
+current_position: [0, 1], new_destinations_clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 1]}
+
+current_position: [0, 1], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 1], new_destinations_clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 1]}
+current_position: [0, 1], new_destinations_clobber: {'Pacific': True, 'cell_position': [0, 1]}
+current_position: [0, 1], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 1], new_destinations_clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 1]}
+current_position: [0, 2], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 1]}
+current_position: [0, 2], new_destinations_clobber: {'Atlantic': False, 'Pacific': False, 'cell_po...
+stdout limit exceeded
+
+
+
+current_position: [0, 0], new_destinations clobber: {'Pacific': True, 'outside_matrix': True, 'cell_position': [0, 0]}
+current_position: [0, 0], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 0], new_destinations clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 0]}
+current_position: [0, 0], new_destinations clobber: {'Pacific': True, 'outside_matrix': True, 'cell_position': [0, 0]}
+current_position: [0, 0], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 0], new_destinations clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 0]}
+current_position: [0, 1], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False, 'outside_matrix': True, 'cell_position': [0, 0]}
+current_position: [0, 1], new_destinations clobber: {'Atlantic': False, 'Pacific': False, 'outside_matrix': True, 'cell_position': [0, 1]}
+current_position: [0, 1], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 1], new_destinations clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 1]}
+current_position: [0, 1], new_destinations clobber: {'Pacific': True, 'outside_matrix': True, 'cell_position': [0, 1]}
+current_position: [0, 1], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 1], new_destinations clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 1]}
+current_position: [0, 2],...
+stdout limit exceeded
+
+
+
+current_position: [0, 0], new_destinations clobber: {'Pacific': True, 'cell_position': [0, 0]}, outside_matrix: True
+current_position: [0, 0], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 0], new_destinations clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 0]}, outside_matrix: False
+current_position: [0, 0], new_destinations clobber: {'Pacific': True, 'cell_position': [0, 0]}, outside_matrix: True
+current_position: [0, 0], downstream_cell_destinations: {'Atlantic': False, 'Pacific': False}
+current_position: [0, 0], new_destinations clobber: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 0]}, outside_matrix: False
+
+For the 00 cell in this matrix I should have four calls to the update flow destinations function, two should be outside, two inside, and trues shouldn't get stepped on. The problem is that my trues are getting stepped on. 
+
+
+
+current_position: [0, 0], new_destinations: {'Pacific': True, 'cell_position': [0, 0]}, outside_matrix: True
+current_position: [0, 0], new_destinations: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 0]}, outside_matrix: False
+current_position: [0, 0], new_destinations: {'Pacific': True, 'cell_position': [0, 0]}, outside_matrix: True
+current_position: [0, 0], new_destinations: {'Atlantic': False, 'Pacific': False, 'cell_position': [0, 0]}, outside_matrix: False
+
+When I check an adjacent cell that I haven't yet calculated, I have a default of false false, and I propagate those values. In this manner I deconstruct the stored value as I move forward instead of building it up.
+
+Should I ignore unvisited cells' data? It hasn't been computed yet, so it's garbage.
+
+
+I ignored unvisited cell's input and now I get _further_ with correct values
+current_position: [0, 0], new_destinations: {'Pacific': True, 'cell_position': [0, 0]}, outside_matrix: True
+current_position: [0, 0], new_destinations: {'Pacific': True, 'cell_position': [0, 0]}, outside_matrix: True
+current_position: [0, 1], new_destinations: {'Atlantic': False, 'Pacific': True, 'cell_position': [0, 1]}, outside_matrix: False
+current_position: [0, 1], new_destinations: {'Pacific': True, 'cell_position': [0, 1]}, outside_matrix: True
+current_position: [0, 2], new_destinations: {'Atlantic': False, 'Pacific': True, 'cell_position': [0, 2]}, outside_matrix: False
+current_position: [0, 2], new_destinations: {'Atlantic': True, 'cell_position': [0, 2]}, outside_matrix: True
+current_position: [0, 2], new_destinations: {'Pacific': True, 'cell_position': [0, 2]}, outside_matrix: True
+current_position: [1, 2], new_destinations: {'Atlantic': True, 'cell_position': [1, 2]}, outside_matrix: True
+current_position: [1, 2], new_destinations: {'Atlantic': True, 'Pacific': True, 'cell_position': [1, 2]}, outside_matrix: False
+current_position: [2, 2], new_destinations: {'Atlantic': True, 'cell_position': [2, 2]}, outside_matrix: True
+current_position: [2, 2], new_destinations: {'Atlantic': True, 'Pacific': True, 'cell_position': [2, 2]}, outside_matrix: False
+current_position: [2, 2], new_destinations: {'Atlantic': True, 'cell_position': [2, 2]}, outside_matrix: True
+current_position: [2, 1], new_destinations: {'Atlantic': True, 'Pacific': True, 'cell_position': [2, 1]}, outs...
+stdout limit exceeded
+
+At first glance it appears the current error is a lack of back-propagation, and cell storage values are also wrong. These cell storage values denote when the last update occured? Fixing cell storage would be a good red herring fix.
+Flow Destinations: [
+ 00 {'Atlantic': False, 'Pacific': True, 'cell_position': [1, 0]}, Incorrect, 1
+ 01 {'Atlantic': False, 'Pacific': True, 'cell_position': [0, 2]}, Incorrect, 2
+ 02 {'Atlantic': True, 'Pacific': True, 'cell_position': [1, 2]}, Correct, 3, first atlantic connection, corner cell
+ 10 {'Atlantic': True, 'Pacific': True, 'cell_position': [1, 0]}, Correct, 8, , copied atlantic correctly
+ 11 {'Atlantic': False, 'Pacific': False}, Correct, 9, lower than everything
+ 12 {'Atlantic': True, 'Pacific': True, 'cell_position': [2, 2]}, Correct, 4, copied pacific correctly
+ 20 {'Atlantic': True, 'Pacific': True, 'cell_position': [1, 0]}, Correct, 7, corner cell, would be correct regardless
+ 21 {'Atlantic': True, 'Pacific': True, 'cell_position': [2, 0]}, Correct, 6, copied pacific correctly
+ 22 {'Atlantic': True, 'Pacific': True, 'cell_position': [2, 1]}] Correct, 5, copied pacific correctly
+
+Next Steps:
+1. Fix cell storage
+2. Add in back propagation -> In find_flow_destinations_for_current_position, when we're done calculating a given cell's flow_destinations and storing them, we can traverse that cell's flow_directions and update all of their flow_destinations.
