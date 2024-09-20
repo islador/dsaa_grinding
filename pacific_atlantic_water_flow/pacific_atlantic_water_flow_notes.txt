@@ -73,3 +73,17 @@ Clockwise Algorithm - Assume the matrix is always square
 4. Move up until you encounter a previously visited cell or the edge of the matrix.
 
 [[9,9,9,9,9],[9,9,9,9,9],[9,9,9,9,9]]
+
+
+[
+  [start,right,right,right,right],
+  [up,right,right,right,down],
+  [left,left,left,left,down]
+]
+
+
+[
+  [2,2,2],
+  [2,1,2],
+  [2,2,2]
+]
