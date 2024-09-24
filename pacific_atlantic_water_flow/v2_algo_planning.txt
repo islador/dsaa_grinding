@@ -1,12 +1,23 @@
 0. Create a matrix of the same size as input named flow_destinations and initialize each cell with {"Pacific": False, "Atlantic": False}.
-1. Sort the matrix, in a stable manner, into lowest to highest value.
 
-2. Work the sorted array in order from lowest to highest and:
-  a. Working Left -> Up -> Right -> Down
-    1. check the corresponding flow_destinations cell for the cell in that coordinate. 
-    2. If flow_destinations contains {"Pacific": True, "Atlantic": True}, set the current cell's flow_destination cell to {"Pacific": True, "Atlantic": True} and exit the 2a loop.
-    3. If the cell's value is lower than the curent_cell's value, forward its flow destinations value to the current_cell's values.
-    4. If flow_destinations does not contain {"Pacific": True, "Atlantic": True}, and current_recursive_stack does not contain the new_position, add the current cell to current_recursive_stack, recurse to the new_position cell starting at 2a.
+1. Set the top right corner and bottom left corner of the matrix's flow destinations to {"Pacific": True, "Atlantic": True}
+
+2. Sort the matrix, in a stable manner, into lowest to highest value.
+
+3. Work the sorted array in order from lowest to highest and:
+  a. If flow_destinations does not contain {"Pacific": True, "Atlantic": False} and recursive stack does not return {"Pacific": True, "Atlantic" True}:
+    1. Working Left -> Up -> Right -> Down
+      a. If the adjacent cell is in the matrix:
+        1. If the adjacent cell is lower value:
+          a. Check the corresponding flow_destinations cell for the cell in that coordinate. 
+          b. If flow_destinations contains {"Pacific": True, "Atlantic": True}, set the current cell's flow_destination cell to {"Pacific": True, "Atlantic": True} and exit to the 3a loop.
+          c. If the flow_destinations contains one true value, merge that true value to the current cell's flow destinations and return to 3a1.
+        2. If the adjacent cell is equal value and current_recursive_stack does not contain the new_position:
+          a. Check the corresponding flow_destinations cell for the cell in that coordinate. 
+          b. If flow_destinations contains {"Pacific": True, "Atlantic": True}, set the current cell's flow_destination cell to {"Pacific": True, "Atlantic": True} and exit to the 3a loop.
+          c. Add the current cell to current_recursive_stack
+          d. Recurse to the new_position cell starting at 3a.
+      b. else -> which edge are off -> add the ocean to the flow_destinations
   b. Set the current cell's flow_destinations to whatever is returned by the recursive stack
 End
 
@@ -15,3 +26,5 @@ Next Step -> Hand Test this variant of the algo since it's different from the tw
 NOTES
 * It might be possible to optimize by setting the edge cell values in Step 0 to the known adjacency values. e.g. top right cell is {"Pacific": True, "Atlantic": True}.
 * The merging of flow_destinations needs a special function to ensure we can only ever move from false to true and never from true to false for a given value. This might be worth an object to make the code cleaner.
+
+Step 2, sorting the matrix, is probably best done with a merge sort.
