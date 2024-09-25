@@ -62,9 +62,9 @@ class Solution:
         return flow_destinations
 
     @classmethod
-    def calculate_next_position_from_sequence(self, sequence, sequence_position, cell):
-        row = cell.coordinates[0]+sequence[sequence_position][0]
-        column = cell.coordinates[1]+sequence[sequence_position][1]
+    def calculate_next_position_from_sequence(self, sequence, sequence_position, position):
+        row = position[0]+sequence[sequence_position][0]
+        column = position[1]+sequence[sequence_position][1]
         return [row,column]
 
     @classmethod
@@ -95,94 +95,138 @@ class Solution:
 
         return {"Pacific": pacific, "Atlantic": atlantic}
     
+    @classmethod
+    def find_flow_destinations_for_cell(self, row_count, column_count, flow_destinations, heights, current_position, recursive_cell_stack):
+        sequence = [[0,-1],[-1,0],[0,1],[1,0]]
+        sequence_position = 0
+        updated_destinations = {}
+        if flow_destinations[current_position[0]][current_position[1]] != {"Pacific": True, "Atlantic": True}:
+            # Left
+            next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, current_position)
+            sequence_position +=1
+            if self.coordinates_are_in_matrix(row_count, column_count, next_position):
+                # If the cell is lower
+                if heights[next_position[0]][next_position[1]] < heights[current_position[0]][current_position[1]]:
+                    if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                        return self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                    else:
+                        updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                # If the next cell is the same as the current cell
+                if heights[next_position[0]][next_position[1]] == heights[current_position[0]][current_position[1]]:
+                    if next_position not in recursive_cell_stack:
+                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                            return self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                        else:
+                            recursive_cell_stack.append(next_position)
+                            updated_destinations = self.find_flow_destinations_for_cell(row_count, column_count, flow_destinations, heights, next_position, recursive_cell_stack)
+            else:
+                discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
+            # Up
+            next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, current_position)
+            sequence_position +=1
+            if self.coordinates_are_in_matrix(row_count, column_count, next_position):
+                # If the cell is lower
+                if heights[next_position[0]][next_position[1]] < heights[current_position[0]][current_position[1]]:
+                    if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                        return self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                    else:
+                        updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                # If the next cell is the same as the current cell
+                if heights[next_position[0]][next_position[1]] == heights[current_position[0]][current_position[1]]:
+                    if next_position not in recursive_cell_stack:
+                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                            return self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                        else:
+                            recursive_cell_stack.append(next_position)
+                            updated_destinations = self.find_flow_destinations_for_cell(row_count, column_count, flow_destinations, heights, next_position, recursive_cell_stack)
+            else:
+                discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
+            # Right
+            next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, current_position)
+            sequence_position +=1
+            if self.coordinates_are_in_matrix(row_count, column_count, next_position):
+                # If the cell is lower
+                if heights[next_position[0]][next_position[1]] < heights[current_position[0]][current_position[1]]:
+                    if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                        return self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                    else:
+                        updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                # If the next cell is the same as the current cell
+                if heights[next_position[0]][next_position[1]] == heights[current_position[0]][current_position[1]]:
+                    if next_position not in recursive_cell_stack:
+                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                            return self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                        else:
+                            recursive_cell_stack.append(next_position)
+                            updated_destinations = self.find_flow_destinations_for_cell(row_count, column_count, flow_destinations, heights, next_position, recursive_cell_stack)
+            else:
+                discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
+            # Down
+            next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, current_position)
+            sequence_position = 0
+            if self.coordinates_are_in_matrix(row_count, column_count, next_position):
+                # If the cell is lower
+                if heights[next_position[0]][next_position[1]] < heights[current_position[0]][current_position[1]]:
+                    if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                        return self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                    else:
+                        updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                # If the next cell is the same as the current cell
+                if heights[next_position[0]][next_position[1]] == heights[current_position[0]][current_position[1]]:
+                    if next_position not in recursive_cell_stack:
+                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                            return self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                        else:
+                            recursive_cell_stack.append(next_position)
+                            updated_destinations = self.find_flow_destinations_for_cell(row_count, column_count, flow_destinations, heights, next_position, recursive_cell_stack)
+            else:
+                discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
+        else:
+            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[current_position[0]][current_position[1]])
+        return updated_destinations
+    
     def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
         # Configuration Variables
         row_count = len(heights)
         column_count = len(heights[0])
         flow_destinations = self.build_flow_destinations_matrix(row_count, column_count)
         sorted_coordinates = self.stable_sort_matrix(row_count, column_count, heights)
-        sequence = [[0,-1],[-1,0],[0,1],[1,0]]
         
-        # Traverse array
-        sequence_position = 0
+        # Calculate all the flow destinations
         for cell in sorted_coordinates:
-            updated_destinations = {}
-            if flow_destinations[cell.coordinates[0]][cell.coordinates[1]] != {"Pacific": True, "Atlantic": True}:
-                # Left
-                next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
-                sequence_position +=1
-                if self.coordinates_are_in_matrix(row_count, column_count, next_position):
-                    # If the cell is lower
-                    if heights[next_position[0]][next_position[1]] < heights[cell.coordinates[0]][cell.coordinates[1]]:
-                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
-                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
-                            # This case is supposed to move us off the current cell and on to another, but that's an optimization. So I'm going to worry about the necessary control structures later.
-                        else:
-                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
-                    #if heights[next_position[0]][next_position[1]] == heights[cell.coordinates[0]][cell.coordinates[1]]:
-                    # 
-                else:
-                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
-                    updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
-                # Up
-                next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
-                sequence_position +=1
-                if self.coordinates_are_in_matrix(row_count, column_count, next_position):
-                    # If the cell is lower
-                    if heights[next_position[0]][next_position[1]] < heights[cell.coordinates[0]][cell.coordinates[1]]:
-                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
-                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
-                            # This case is supposed to move us off the current cell and on to another, but that's an optimization. So I'm going to worry about the necessary control structures later.
-                        else:
-                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
-                    #if heights[next_position[0]][next_position[1]] == heights[cell.coordinates[0]][cell.coordinates[1]]:
-                    # 
-                else:
-                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
-                    updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
-                # Right
-                next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
-                sequence_position +=1
-                if self.coordinates_are_in_matrix(row_count, column_count, next_position):
-                    # If the cell is lower
-                    if heights[next_position[0]][next_position[1]] < heights[cell.coordinates[0]][cell.coordinates[1]]:
-                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
-                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
-                            # This case is supposed to move us off the current cell and on to another, but that's an optimization. So I'm going to worry about the necessary control structures later.
-                        else:
-                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
-                    #if heights[next_position[0]][next_position[1]] == heights[cell.coordinates[0]][cell.coordinates[1]]:
-                    # 
-                else:
-                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
-                    updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
-                # Down
-                next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
-                sequence_position = 0
-                if self.coordinates_are_in_matrix(row_count, column_count, next_position):
-                    # If the cell is lower
-                    if heights[next_position[0]][next_position[1]] < heights[cell.coordinates[0]][cell.coordinates[1]]:
-                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
-                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
-                            # This case is supposed to move us off the current cell and on to another, but that's an optimization. So I'm going to worry about the necessary control structures later.
-                        else:
-                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
-                    #if heights[next_position[0]][next_position[1]] == heights[cell.coordinates[0]][cell.coordinates[1]]:
-                    # 
-                else:
-                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
-                    updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
-            #else:
-                # Need recursive elements
-                #updated_destinations = {"Pacific": True}
+            # So i want to recurse to here. How does that work?
+            updated_destinations = self.find_flow_destinations_for_cell(row_count, column_count, flow_destinations, heights, cell.coordinates, [])
             # This is in the wrong space, it needs to be moved once the rest of the functions are defined.
             flow_destinations[cell.coordinates[0]][cell.coordinates[1]] = self.assemble_safe_flow_destination_updates(flow_destinations[cell.coordinates[0]][cell.coordinates[1]], updated_destinations)
 
-        print(f"flow_destinations: {flow_destinations}")
-        return [[1]]
+        # Package it up for evaluation
+        current_row = 0
+        current_column = 0
+        results = []
+        # Expand the matrix and populate it with known flow destinations
+        while current_row < row_count:
+            while current_column < column_count:
+                if flow_destinations[current_row][current_column] == {"Pacific": True, "Atlantic": True}:
+                    results.append([current_row,current_column])
+                current_column+=1
+            current_row +=1
+            current_column = 0
+        return results
 
-#input_array = [[2,2,2],[2,1,2],[2,2,2]]
-#print(f"{Solution.pacificAtlantic(Solution, input_array)}")
+input_array = [[2,2,2],[2,1,2],[2,2,2]]
+results = Solution.pacificAtlantic(Solution, input_array)
+if results == [[0,0],[0,1],[0,2],[1,0],[1,2],[2,0],[2,1],[2,2]]:
+    print("Correct")
+else:
+    print("Wrong")
 
 input_array = [[4,2,7,3,4],[7,4,6,4,7],[6,3,5,3,6]]
-print(f"{Solution.pacificAtlantic(Solution, input_array)}")
+results = Solution.pacificAtlantic(Solution, input_array)
+if results == [[0,2],[0,4],[1,0],[1,1],[1,2],[1,3],[1,4],[2,0]]:
+    print("Correct")
+else:
+    print("Wrong")
