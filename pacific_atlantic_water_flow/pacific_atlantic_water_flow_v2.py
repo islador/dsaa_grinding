@@ -7,8 +7,7 @@ class Cell:
 class Solution:
 
     @classmethod
-    def assemble_new_flow_destination_for_cell(self, cell, flow_destinations, updated_destinations):
-        current_flow_destinations = flow_destinations[cell.coordinates[0]][cell.coordinates[1]]
+    def assemble_safe_flow_destination_updates(self, current_flow_destinations, updated_destinations):
         safe_updates = current_flow_destinations
 
         if "Pacific" in updated_destinations:
@@ -68,6 +67,34 @@ class Solution:
         column = cell.coordinates[1]+sequence[sequence_position][1]
         return [row,column]
 
+    @classmethod
+    def coordinates_are_in_matrix(self, row_count, column_count, coordinates):
+        if coordinates[0] < 0:
+            return False
+        if coordinates[1] < 0:
+            return False
+        if coordinates[0] > row_count-1:
+            return False
+        if coordinates[1] > column_count-1:
+            return False
+        return True
+
+    @classmethod
+    def calculate_ocean_from_off_matrix_coordinates(self, row_count, column_count, coordinates):
+        pacific = False
+        atlantic = False
+        
+        if coordinates[0] < 0:
+            pacific = True
+        if coordinates[1] < 0:
+            pacific = True
+        if coordinates[0] > row_count-1:
+            atlantic = True
+        if coordinates[1] > column_count-1:
+            atlantic = True
+
+        return {"Pacific": pacific, "Atlantic": atlantic}
+    
     def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
         # Configuration Variables
         row_count = len(heights)
@@ -79,29 +106,50 @@ class Solution:
         # Traverse array
         sequence_position = 0
         for cell in sorted_coordinates:
+            updated_destinations = {}
             if flow_destinations[cell.coordinates[0]][cell.coordinates[1]] != {"Pacific": True, "Atlantic": True}:
                 # Left
                 next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
-                print(f"cell_coordinates: {cell.coordinates}, next_position: {next_position}")
                 sequence_position +=1
+                if self.coordinates_are_in_matrix(row_count, column_count, next_position):
+                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                    # evaluate magic
+                else:
+                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                    updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
                 # Up
                 next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
-                print(f"cell_coordinates: {cell.coordinates}, next_position: {next_position}")
                 sequence_position +=1
+                if self.coordinates_are_in_matrix(row_count, column_count, next_position):
+                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                    # evaluate magic
+                else:
+                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                    updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
                 # Right
                 next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
-                print(f"cell_coordinates: {cell.coordinates}, next_position: {next_position}")
                 sequence_position +=1
+                if self.coordinates_are_in_matrix(row_count, column_count, next_position):
+                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                    # evaluate magic
+                else:
+                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                    updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
                 # Down
                 next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
-                print(f"cell_coordinates: {cell.coordinates}, next_position: {next_position}")
                 sequence_position = 0
-            else:
+                if self.coordinates_are_in_matrix(row_count, column_count, next_position):
+                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                    # evaluate magic
+                else:
+                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
+                    updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
+            #else:
                 # Need recursive elements
-                updated_destinations = {"Pacific": True}
+                #updated_destinations = {"Pacific": True}
             # This is in the wrong space, it needs to be moved once the rest of the functions are defined.
-            updated_destinations = {"Pacific": True}
-            flow_destinations[cell.coordinates[0]][cell.coordinates[1]] = self.assemble_new_flow_destination_for_cell(cell, flow_destinations, updated_destinations)
+            flow_destinations[cell.coordinates[0]][cell.coordinates[1]] = self.assemble_safe_flow_destination_updates(flow_destinations[cell.coordinates[0]][cell.coordinates[1]], updated_destinations)
+
         print(f"flow_destinations: {flow_destinations}")
         return [[1]]
 
