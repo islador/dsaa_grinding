@@ -112,8 +112,15 @@ class Solution:
                 next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
                 sequence_position +=1
                 if self.coordinates_are_in_matrix(row_count, column_count, next_position):
-                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
-                    # evaluate magic
+                    # If the cell is lower
+                    if heights[next_position[0]][next_position[1]] < heights[cell.coordinates[0]][cell.coordinates[1]]:
+                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                            # This case is supposed to move us off the current cell and on to another, but that's an optimization. So I'm going to worry about the necessary control structures later.
+                        else:
+                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                    #if heights[next_position[0]][next_position[1]] == heights[cell.coordinates[0]][cell.coordinates[1]]:
+                    # 
                 else:
                     discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
                     updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
@@ -121,8 +128,15 @@ class Solution:
                 next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
                 sequence_position +=1
                 if self.coordinates_are_in_matrix(row_count, column_count, next_position):
-                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
-                    # evaluate magic
+                    # If the cell is lower
+                    if heights[next_position[0]][next_position[1]] < heights[cell.coordinates[0]][cell.coordinates[1]]:
+                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                            # This case is supposed to move us off the current cell and on to another, but that's an optimization. So I'm going to worry about the necessary control structures later.
+                        else:
+                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                    #if heights[next_position[0]][next_position[1]] == heights[cell.coordinates[0]][cell.coordinates[1]]:
+                    # 
                 else:
                     discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
                     updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
@@ -130,8 +144,15 @@ class Solution:
                 next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
                 sequence_position +=1
                 if self.coordinates_are_in_matrix(row_count, column_count, next_position):
-                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
-                    # evaluate magic
+                    # If the cell is lower
+                    if heights[next_position[0]][next_position[1]] < heights[cell.coordinates[0]][cell.coordinates[1]]:
+                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                            # This case is supposed to move us off the current cell and on to another, but that's an optimization. So I'm going to worry about the necessary control structures later.
+                        else:
+                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                    #if heights[next_position[0]][next_position[1]] == heights[cell.coordinates[0]][cell.coordinates[1]]:
+                    # 
                 else:
                     discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
                     updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
@@ -139,8 +160,15 @@ class Solution:
                 next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
                 sequence_position = 0
                 if self.coordinates_are_in_matrix(row_count, column_count, next_position):
-                    discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
-                    # evaluate magic
+                    # If the cell is lower
+                    if heights[next_position[0]][next_position[1]] < heights[cell.coordinates[0]][cell.coordinates[1]]:
+                        if flow_destinations[next_position[0]][next_position[1]] == {"Pacific": True, "Atlantic": True}:
+                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                            # This case is supposed to move us off the current cell and on to another, but that's an optimization. So I'm going to worry about the necessary control structures later.
+                        else:
+                            updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, flow_destinations[next_position[0]][next_position[1]])
+                    #if heights[next_position[0]][next_position[1]] == heights[cell.coordinates[0]][cell.coordinates[1]]:
+                    # 
                 else:
                     discovered_destinations = self.calculate_ocean_from_off_matrix_coordinates(row_count, column_count, next_position)
                     updated_destinations = self.assemble_safe_flow_destination_updates(updated_destinations, discovered_destinations)
