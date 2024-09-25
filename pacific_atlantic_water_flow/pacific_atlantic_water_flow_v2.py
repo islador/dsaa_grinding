@@ -62,6 +62,12 @@ class Solution:
             current_column = 0
         return flow_destinations
 
+    @classmethod
+    def calculate_next_position_from_sequence(self, sequence, sequence_position, cell):
+        row = cell.coordinates[0]+sequence[sequence_position][0]
+        column = cell.coordinates[1]+sequence[sequence_position][1]
+        return [row,column]
+
     def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
         # Configuration Variables
         row_count = len(heights)
@@ -75,16 +81,26 @@ class Solution:
         for cell in sorted_coordinates:
             if flow_destinations[cell.coordinates[0]][cell.coordinates[1]] != {"Pacific": True, "Atlantic": True}:
                 # Left
-                next_position = 2
+                next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
+                print(f"cell_coordinates: {cell.coordinates}, next_position: {next_position}")
                 sequence_position +=1
                 # Up
+                next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
+                print(f"cell_coordinates: {cell.coordinates}, next_position: {next_position}")
+                sequence_position +=1
                 # Right
+                next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
+                print(f"cell_coordinates: {cell.coordinates}, next_position: {next_position}")
+                sequence_position +=1
                 # Down
+                next_position = self.calculate_next_position_from_sequence(sequence, sequence_position, cell)
+                print(f"cell_coordinates: {cell.coordinates}, next_position: {next_position}")
                 sequence_position = 0
             else:
                 # Need recursive elements
                 updated_destinations = {"Pacific": True}
-            updated_destinations = {"Pacific": False}
+            # This is in the wrong space, it needs to be moved once the rest of the functions are defined.
+            updated_destinations = {"Pacific": True}
             flow_destinations[cell.coordinates[0]][cell.coordinates[1]] = self.assemble_new_flow_destination_for_cell(cell, flow_destinations, updated_destinations)
         print(f"flow_destinations: {flow_destinations}")
         return [[1]]
