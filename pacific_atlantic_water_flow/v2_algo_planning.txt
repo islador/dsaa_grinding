@@ -1,4 +1,4 @@
-0. Create a matrix of the same size as input named flow_destinations and initialize each cell with {"Pacific": False, "Atlantic": False}.
+0. Create a matrix of the same size as input named flow_destinations
 
 1. Set the top right corner and bottom left corner of the matrix's flow destinations to {"Pacific": True, "Atlantic": True}
 

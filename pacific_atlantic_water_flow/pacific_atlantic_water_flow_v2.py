@@ -7,6 +7,20 @@ class Cell:
 class Solution:
 
     @classmethod
+    def assemble_new_flow_destination_for_cell(self, cell, flow_destinations, updated_destinations):
+        current_flow_destinations = flow_destinations[cell.coordinates[0]][cell.coordinates[1]]
+        safe_updates = current_flow_destinations
+
+        if "Pacific" in updated_destinations:
+            if updated_destinations["Pacific"] == True:
+                safe_updates["Pacific"] = True
+        if "Atlantic" in updated_destinations:
+            if updated_destinations["Atlantic"] == True:
+                safe_updates["Atlantic"] = True
+
+        return safe_updates
+
+    @classmethod
     def stable_sort_matrix(self, row_count, column_count, matrix):
         current_row = 0
         current_column = 0
@@ -52,12 +66,27 @@ class Solution:
         # Configuration Variables
         row_count = len(heights)
         column_count = len(heights[0])
-        sorted_coordinates = self.stable_sort_matrix(row_count, column_count, heights)
         flow_destinations = self.build_flow_destinations_matrix(row_count, column_count)
-        print(f"Flow Destinations")
-        print(f"{flow_destinations}")
-        #for cell in sorted_coordinates:
-        #    print(f"{cell.coordinates}")
+        sorted_coordinates = self.stable_sort_matrix(row_count, column_count, heights)
+        sequence = [[0,-1],[-1,0],[0,1],[1,0]]
+        
+        # Traverse array
+        sequence_position = 0
+        for cell in sorted_coordinates:
+            if flow_destinations[cell.coordinates[0]][cell.coordinates[1]] != {"Pacific": True, "Atlantic": True}:
+                # Left
+                next_position = 2
+                sequence_position +=1
+                # Up
+                # Right
+                # Down
+                sequence_position = 0
+            else:
+                # Need recursive elements
+                updated_destinations = {"Pacific": True}
+            updated_destinations = {"Pacific": False}
+            flow_destinations[cell.coordinates[0]][cell.coordinates[1]] = self.assemble_new_flow_destination_for_cell(cell, flow_destinations, updated_destinations)
+        print(f"flow_destinations: {flow_destinations}")
         return [[1]]
 
 #input_array = [[2,2,2],[2,1,2],[2,2,2]]
