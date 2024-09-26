@@ -17,3 +17,14 @@ How the hell do you do string comparison like that in JS?
 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/length
 
 Ok, so I misread the concept of anagram. I thought it was reversed, not "different". Back to the drawing board.
+
+# An anagram is a string that contains the exact same characters as another string, but the order of the characters can be different.
+
+Brute Force is what? iterate through each string, count each letter, and then compare the counts?
+
+What is the computation on that? N^2?
+
+
+Ok, so I could sort both strings and then compare them. The sort will cost me nlogn and then I can compare the letters side by side. If they don't match, then they don't have the same letters.
+
+I could iterate over each square
