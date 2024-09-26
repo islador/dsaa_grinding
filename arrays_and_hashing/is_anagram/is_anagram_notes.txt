@@ -16,3 +16,4 @@ How the hell do you do string comparison like that in JS?
 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/at lets me use negative integers. 
 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/length
 
+Ok, so I misread the concept of anagram. I thought it was reversed, not "different". Back to the drawing board.
