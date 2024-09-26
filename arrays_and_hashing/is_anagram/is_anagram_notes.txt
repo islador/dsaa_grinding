@@ -1,0 +1,18 @@
+Assumptions:
+1. Two strings of the same length
+2. No malicious input
+
+s and t
+I shouldn't need any extra memory since I should be able to compare the strings, character by character, against each other.
+
+Start at the left of s and the right of t and work in opposite directions.
+S goes left to right
+T goes right to left
+Compare each character
+If they aren't the same, return false
+If you get to the end and haven't returned false, return true.
+
+How the hell do you do string comparison like that in JS?
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/at lets me use negative integers. 
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/length
+
