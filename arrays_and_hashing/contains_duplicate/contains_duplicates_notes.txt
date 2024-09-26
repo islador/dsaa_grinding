@@ -1,0 +1,1 @@
+My initial gut was to use a set, but I wasn't sure if I was allowed to, so I used an array and ran an includes, which gives me n^2 time complexity and potentially n2 memory complexity. Aka, worse than brute force.
