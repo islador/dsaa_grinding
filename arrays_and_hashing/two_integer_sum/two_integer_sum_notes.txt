@@ -1,0 +1,59 @@
+Given an array of integers nums and an integer target, return the indices i and j such that nums[i] + nums[j] == target and i != j.
+
+Return the location of two numbers in the array that equal the target but aren't the same number. Return the answer with the smaller index first.
+
+nums = [1,2,3,3,4,4,6]
+target = 6
+Result [1 (2), 4 (4)], not [2 (3), 3 (3)]
+
+You may assume that every input has exactly one pair of indices i and j that satisfy the condition.
+* This assumption means that this is fundamentally a search problem.
+* Can I operate this search such that i only iterate over the array twice?
+
+Possible solutions:
+Brute Force:
+1. start with a number, subtract it from the target, then search the nums array for the result. If found, and not equal to the number, return the start number and the found number.
+Computation: n^n?
+Memory: Constant
+
+Alternative - Trade memory:
+What if I did the same algo, but I did it more?
+soughtAddends = new Map()
+seenNumbers = new Map()
+for number of nums:
+0. soughtAddend = target - number
+1. if soughtAdden != number:
+  2. if soughtAddends wants the number we're looking at
+        return the locations for the number that sought this number and this number's location
+  3. elif seenNumbers has the soughtAddend we're looking for:
+        return the location for the number that this number sought and this number's location, sort them prior
+  4. else:
+      store the location of this number and its sought number
+
+# How do we ensure we don't return the same number? Where should that check occur? Move that to phase 2
+  * We should probably do the calculation and then reject it
+
+# What is the computational complexity of this?
+N array access and 2N hash access, so just 3N?
+
+# What is the memory cost?
+Worst case is 3N (nums array + soughtAddends + seenNumbers)
+
+let nums: [1,2,3,3,4,4,6]
+let target = 6
+let soughtAddends = new Map()
+let seenNumbers = new Map()
+
+0. 6-1 = 5 -> soughtAddends empty -> soughtAddends = {0:5}, seenNumbers = {0:1}
+1. 6-2 = 4 -> soughtAddends doesn't contain 4, seenNumbers doesn't contain 4 -> soughtAddends = {0:5, 1:4}, seenNumbers = {0:1, 1:2}
+2. 6-3 = 3 -> soughtAddend == number, end -> soughtAddends = {0:5, 1:5}, seenNumbers = {0:1, 1:2}
+3. 6-3 = 3 -> soughtAddend == number, end -> soughtAddends = {0:5, 1:5}, seenNumbers = {0:1, 1:2}
+4. 6-4 = 2 -> soughtAddends doesn't contain 2, seenNumbers does contain 2, return [1,4]
+
+
+let nums: [1,2,3,3,4,4,6]
+let target = 9
+let soughtAddends = new Map()
+let seenNumbers = new Map()
+
+
