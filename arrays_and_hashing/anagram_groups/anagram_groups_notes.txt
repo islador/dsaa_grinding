@@ -43,3 +43,16 @@ Rough idea:
 
 It feels like there's a Trie in here somewhere? The pruning mechanic in step 4 feels _very_ similar to something I recall from Tries.
 
+Ok, looked at the solution. The core of the proposed solution is to have a single hash map that encodes the character count(s) as the key and then use the collisions as our search function. In short, counting the characters as a normalizing compression algorithm. It's an objectively better solution. What's it look like when I try to build it in JS?
+
+Create a map of knownAnagrams: {}
+Iterate through the list and for each string:
+1. iterate through each character in the string, incrementing a map structured like {"a":1, "b":2, "c":1} for it
+2. extract the hash' keys and value pairs and alphabetize them - Is this needed? Does the map preserve insert order or a useful implicit order?
+3. compress the map's value into a string called anagramKey: "a1b2c1"
+4. check if the knownAnagrams map has the anagramKey
+  4a. If it does, insert the current string into the anagramKey's array
+  4b. If it doesn't, insert a new key {anagramKey: [currentString]}
+
+Iterate through knownAnagrams and return every value with length > 1
+
