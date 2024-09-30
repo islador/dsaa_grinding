@@ -1,0 +1,45 @@
+Given an array of strings strs, group all anagrams together into sublists. You may return the output in any order.
+
+So we give you ["cat","dog","act","god","good","meow"]
+the code should return [["cat","act"],["dog","god"]]
+
+The second example says we should return any single characters? Or maybe it's just if there's one string input that is always returned?
+
+There's no clarification of on whether a string may be repeated in the input, playing with the cases denotes that the function should handle duplicates in the input by returning the duplicates as an anagram group.
+
+Grouping anagrams is a layer on top of finding anagrams in the first place. So we find anagrams with some extra storage to assemble the groups.
+
+A conceptually known approach would be to have groupAnagrams delgate to isAnagram from the earlier is_anagram problem. The isAnagram solution I wrote up earlier stores the characters of each string in a hash map, iterates over the characters once to build that, then iterates over the maps once more. So max cost is N space and 2N time. Very efficient.
+
+Brute force you would:
+Iterate over the list of strings and for each string you'd compare it to each other string and is isAnagram. This would yield a time complexity of (2Sc)^N, which is pretty nasty.
+
+If you grouped the strings first by length, you wouldn't have to compare strings of known incompatible length. This would cost an iteration over the string list and a minor increase in storage.
+
+["cat","dog","act","god","good","meow"] -> [["cat","dog","act","god"],["good","meow"]]
+
+Then you could iterate across each sublist and return sublists that match.
+
+input: ["bbba","abbb","babb","bbab","mike","dads","imke","wild","cat","act"]
+group by size: [["bbba","abbb","babb","bbab","mike","dads","imke","wild"],["cat","act"]]
+identify anagrams: [["bbba","abbb","babb","bbab"],["mike","imke"],["cat","act"]]
+
+What if you just did the is_anagram algorithm but bigger? You iterate the list once building a map of each string, then you group by hash lengths, then you evaluate all the same hashes against each other.
+** heh, amusingly this is a trivially paralelizable problem
+
+There's something rather nasty here in that when you're comparing multiple strings, string A may match String C but not String B, so you need something that always compares String A to both String B and C. What's somewhat nifty is that if String A and C are anagrams, then you don't need to compare String C to string B if you've already compared A to B. In this manner the comparison field narrows as anagrams are found. It goes further actually, once you know that String A and C are anagrams, you no longer need to compare String C to anything so long as you compare string A to everything.
+
+This means there's probably a memory intensive option to reduce time cost; you'll want to keep track of which strings have been compared against which other strings so that you only do the minimal amount of processing. Since we're given a list of input strings we can do this by having a matrix that denotes string by row and comparison results by column. That'll cost us 2N in space but probably allow us to minimize processing time a fair bit.
+
+You also don't want to recompute the character maps for each string, doing so would increase time complexity because we're looping over each string multiple times, so you'll want to store these.
+
+Rough idea:
+0. If there's only one string, return it (weird edge optimization)
+1. Unless their's 2 strings, sort the input strings by length and build sub groups by length -> time: nlogn, space: constant
+2. Iterate through the list and build a character map of each string -> time: N, space: less than N
+3. Build a matrix of comparison for each subgroup -> time: N, space: 2N
+4. Within each subgroup, compare each string's character map, one by one (A string, B string), tracking anagrams. When an anagram is found, store the A and B strings in a results list, don't compare the B string to other strings in the subgroup.
+5. Return the results list
+
+It feels like there's a Trie in here somewhere? The pruning mechanic in step 4 feels _very_ similar to something I recall from Tries.
+
