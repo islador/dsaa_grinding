@@ -8,12 +8,7 @@ class Solution {
         let countFrequency = new Map()
         // Count the frequency of the numbers in the provided array
         for (let num of nums) {
-            let currentCount = countFrequency.get(num)
-            if (currentCount != undefined) {
-                countFrequency.set(num, currentCount +1) 
-            } else {
-                countFrequency.set(num, 1)
-            }
+            countFrequency.set(num, (countFrequency.get(num) || 0) +1)
         }
 
         // Convert the countFrequency map into a grouped set of values
@@ -34,11 +29,10 @@ class Solution {
             if (numberArray != undefined) {
                 for(let number of numberArray){
                     results.push(number)
-                    if(results.length == k) { break }
+                    if(results.length == k) { return results }
                 }
             }
             currentPosition -=1
         }
-        return results
     }
 }
