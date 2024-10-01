@@ -31,3 +31,23 @@ In this proposed algo I only iterate the list once, and I need to keep the topNu
 Now lets look at the solution.
 
 # Solution Notes
+
+Huh, so you can use a heap to implement a priority queue, this improves the efficiency of my topNumbers array by not having to keep reordering it. It gets it down to KlogN which is pretty damn good.
+
+Apparently there's a linear time solution though?
+
+Ok, so the way he's explaining it is linear time + 3N space.
+N space for the original list
+2N space for the ordered count, since we have an array of N size containing potentially an array of N size
+unique(N) space for the counted values
+
+You iterate through the list and count everything storing them in a map called numberFrequency composed of the number : countFrequency (e.g. {3:2, 2:5, 7:9}) This is constant time + unique(N) space.
+
+Then you iterate through the countFrequency map (unique(N) time) and build the orderedCount arrays.
+
+Then you iterate through the orderedCount arrays a minimum of K accesses, but possibly as much as N+K accesses.
+
+Honestly, I'm not sure if this is as efficient as described? It's certainly space intensive.
+
+# Implementation Notes
+
