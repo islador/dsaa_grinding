@@ -1,0 +1,33 @@
+# Prompt
+Given an integer array nums and an integer k, return the k most frequent elements within the array.
+
+The test cases are generated such that the answer is always unique.
+
+You may return the output in any order.
+
+# Notes - Playing with the system to confirm edges
+
+Ok, so with [1,2,3,4,5] and k of 1, we return 1, which is... confusing?
+
+Ok, so with [1,2,3,4,5] and k of 3, we return [1,2,3], so there's a bias towards first in the array?
+
+nums=[7,7,7,8,8,9]
+k=1
+yields [7]
+
+# Implementation Thoughts pre-solution review
+Well, we need to count the frequency with which every number is present in the input, so that's going to cost N no matter what.
+
+We also need a way to keep a list of the X most common values in the array. So we'll probably want a way to track the frequency of every number and a way to keep track of the top X numbers.
+
+Maybe an array called topNumbers [number,number,number] and a map called numberFrequency {number: appearanceCount}?
+
+We iterate over the list and keep a count of frequency in the numberFrequency map (e.g. {3: 2, 2:5, 7:9}), and each time we increment a numberFrequency value we check to see if the appearanceCount > the lowest number in topNumbers. If it is, we swap the lowest number in topNumber for the currentNumber from the list.
+
+There's also probably an optimization in knowing where we are in the list, e.g. if the list has 4 values and the first 3 are the same, and we're looking for the first most frequent, we can stop processing.
+
+In this proposed algo I only iterate the list once, and I need to keep the topNumber array in order, but numberFrequency is a map with constant access times, so I don't care there. The performance here is likely N*Klogk where k is the number of integers expected to be returned and thus kept in the topNumbers array.
+
+Now lets look at the solution.
+
+# Solution Notes
