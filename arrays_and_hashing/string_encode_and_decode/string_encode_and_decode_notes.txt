@@ -4,4 +4,22 @@ Design an algorithm to encode a list of strings to a single string. The encoded 
 Please implement encode and decode
 
 # Initial Thoughts
-This prompt is pretty awful.
+This prompt is pretty awful. Like, any encoding? What defines "encoding"? What are the objectives? Be as fast as possible? Because at that point it's just delimiter selection? So that's string encoding? specialty characters? Seems like they're asking for a unique specialization that's generally delegated out instead of an algo thing.
+
+# Playing with it
+ok, so I made a super basic example and ran through the submission process a few times to get a better sense of the intentions and realities.
+
+There are a few edge cases that need to be handled:
+1. Empty array, to which they want an Empty array returned
+2. Preserving empty strings (they're still strings after all).
+  2a. A lone empty string ([""]) should result in that lone empty string being passed along.
+  2b. An empty string in the center of the array should also pass through. e.g: ["cat","","dog"] -> ["cat", "", "dog"]
+3. Weird characters -> it must preserve the character system already in place.
+
+This means escaping is going to be essential.
+
+Test empty string passthrough: 
+["cat","dog","","mouse"]
+
+Test special character encoding:
+["\/\/","^.02@","meow","|\|\|"]
