@@ -1,13 +1,19 @@
-class Solution {
+module.exports = class Solution {
   /**
    * @param {string[]} strs
    * @returns {string}
    */
   encode(strs) {
+    if(strs.length == 0) { return undefined }
     let encodedString = ""
-    for(let str of strs) {
 
+    for(let i = 0; i < strs.length; i++) {
+      encodedString = encodedString.concat('\"',strs[i],'\"')
+      if(i < (strs.length - 1)){
+        encodedString = encodedString.concat(',')
+      }
     }
+    //console.log("encodedString: ", encodedString)
     return encodedString
   }
 
@@ -16,31 +22,12 @@ class Solution {
    * @returns {string[]}
    */
   decode(str) {
+    if(str == undefined) { return [] }
+    console.log("str: ", str)
     if (str.length > 0){
-      return str.split("//")
+      return str.split('","')
     } else {
       return []
     }
   }
 }
-
-let solution = new Solution()
-let encoded = solution.encode(["cat","dog","","mouse"])
-console.log("Encoded: ", encoded)
-console.log("Decoded: ", solution.decode(encoded))
-
-let encoded2 = solution.encode(["\/\/","^.02@","meow","|\|\|"])
-console.log("Encoded: ", encoded2)
-console.log("Decoded: ", solution.decode(encoded2))
-
-
-console.log("One Empty String")
-let encoded3 = solution.encode([""])
-console.log("Encoded: ", encoded3)
-console.log("Decoded: ", solution.decode(encoded3))
-
-
-console.log("Empty Array")
-let encoded4 = solution.encode([])
-console.log("Encoded: ", encoded4)
-console.log("Decoded: ", solution.decode(encoded4))
