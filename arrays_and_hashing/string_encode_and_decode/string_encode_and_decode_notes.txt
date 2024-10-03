@@ -18,23 +18,5 @@ There are a few edge cases that need to be handled:
 
 This means escaping is going to be essential.
 
-/* let solution = new Solution()
-let encoded = solution.encode(["cat","dog","","mouse"])
-console.log("Encoded: ", encoded)
-console.log("Decoded: ", solution.decode(encoded))
-
-let encoded2 = solution.encode(["\/\/","^.02@","meow","|\|\|"])
-console.log("Encoded: ", encoded2)
-console.log("Decoded: ", solution.decode(encoded2))
-
-
-console.log("One Empty String")
-let encoded3 = solution.encode([""])
-console.log("Encoded: ", encoded3)
-console.log("Decoded: ", solution.decode(encoded3))
-
-
-console.log("Empty Array")
-let encoded4 = solution.encode([])
-console.log("Encoded: ", encoded4)
-console.log("Decoded: ", solution.decode(encoded4)) */
+# After the solution
+The concept is defining and counting lengths. You take advantage of the fact that you know where the start of the string is and you count from there. By keeping track of the count you know whether you're reading "Safe" input or not. This only works if you control the encode algorithm as well as the decode, if the decode can consume anything, then the concept breaks down.
