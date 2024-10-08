@@ -26,6 +26,11 @@ describe('Encode', () => {
     let param = ["cat","1234567890","dog"]
     expect(solution.encode(param)).toEqual("3@)cat10@)12345678903@)dog")
   });
+
+  test('An array with emojis encodes them properly', () => {
+    let param = ["EmojiTest 😊","🌟✨🌟✨🌟","🤖👽🤖👽"]
+    expect(solution.encode(param)).toEqual("11@)EmojiTest 😊5@)🌟✨🌟✨🌟4@)🤖👽🤖👽")
+  });
 })
 
 describe('Decode', () => {
@@ -52,5 +57,10 @@ describe('Decode', () => {
   test('An encoded string with our delimiter scheme as an input outputs the pre-encoding array correctly', () => {
     let param = "3@)cat3@)2@)3@)dog"
     expect(solution.decode(param)).toEqual(["cat","2@)","dog"])
+  });
+
+  test.skip('An encoded string with emojis decodes them correctly', () => {
+    let param = "11@)EmojiTest 😊5@)🌟✨🌟✨🌟4@)🤖👽🤖👽"
+    expect(solution.encode(param)).toEqual(["EmojiTest 😊","🌟✨🌟✨🌟","🤖👽🤖👽"])
   });
 })
